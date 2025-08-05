@@ -31,13 +31,16 @@ export class UsersService {
     async findOne(id:string){
         return this.prisma.user.findUnique({where:{id}});
     }
+    //looks up the user during login, compares hashed password and sign JWT
     async findByEmail(email:string){
         return this.prisma.user.findUnique({
             where:{email},
             select:{
                 id:true,
+                name:true,
                 email:true,
                 password:true,
+                role:true,
             }
         
         });
