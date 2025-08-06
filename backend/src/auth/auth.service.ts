@@ -7,6 +7,8 @@ import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
+import { Role } from 'generated/prisma'; // 👈 adjust this if you renamed enums
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -15,10 +17,6 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  /**
-   * Validates a user's email and password.
-   * Throws UnauthorizedException if invalid.
-   */
   async validateUser(email: string, password: string) {
     const user = await this.usersService.findByEmail(email);
 
@@ -26,17 +24,13 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    // ✅ Return user with role
     return {
       id: user.id,
       email: user.email,
-      role: user.role, // 👈 make sure this exists in your user model and SELECT it in prisma
+      role: user.role,
     };
   }
 
-  /**
-   * Signs and returns a JWT token based on the validated user.
-   */
   async login(user: { id: string; email: string; role: string }) {
     const payload = {
       sub: user.id,
@@ -49,9 +43,6 @@ export class AuthService {
     };
   }
 
-  /**
-   * Registers a new user, hashes the password, and returns a token.
-   */
   async register(registerDto: RegisterDto) {
     const existingUser = await this.usersService.findByEmail(registerDto.email);
 
@@ -59,9 +50,18 @@ export class AuthService {
       throw new BadRequestException('Email is already registered');
     }
 
-    const user = await this.usersService.create(registerDto);
+    // Hash password
+    const hashedPassword = await bcrypt.hash(registerDto.password, 10);
 
-    // ✅ Return login token after successful registration
+    const createUserDto: CreateUserDto = {
+      name: registerDto.name,
+      email: registerDto.email,
+      password: hashedPassword,
+      role: Role.CUSTOMER, // ✅ Default role assignment
+    };
+
+    const user = await this.usersService.create(createUserDto);
+
     return this.login({
       id: user.id,
       email: user.email,

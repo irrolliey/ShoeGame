@@ -1,6 +1,5 @@
-// src/users/dto/create-user.dto.ts
-import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
-import { Role } from 'generated/prisma';
+// src/auth/dto/register.dto.ts
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class RegisterDto {
   @IsNotEmpty()
@@ -13,7 +12,4 @@ export class RegisterDto {
   @IsString()
   @IsNotEmpty()
   password: string;
-
-  @IsEnum(Role)
-  role: Role;  // <-- MAKE SURE THIS EXISTS
 }
