@@ -1,7 +1,7 @@
-import { TasksMiddleware } from './tasks.middleware';
+import { TasksMiddleware } from './tasks.middleware'
 
 describe('TasksMiddleware', () => {
   it('should be defined', () => {
-    expect(new TasksMiddleware()).toBeDefined();
-  });
-});
+    expect(new TasksMiddleware()).toBeDefined()
+  })
+})

@@ -1,7 +1,7 @@
-import { TasksFilter } from './tasks.filter';
+import { TasksFilter } from './tasks.filter'
 
 describe('TasksFilter', () => {
   it('should be defined', () => {
-    expect(new TasksFilter()).toBeDefined();
-  });
-});
+    expect(new TasksFilter()).toBeDefined()
+  })
+})
